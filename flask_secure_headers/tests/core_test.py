@@ -10,20 +10,20 @@ class TestCSPHeaderCreation(unittest.TestCase):
 		defaultCSP = sh.defaultPolicies['CSP']
 		""" test CSP policy update """
 		h = CSP({'script-src':['self','code.jquery.com']}).update_policy(defaultCSP)
-		self.assertEquals(h['script-src'],['self', 'code.jquery.com'])
-		self.assertEquals(h['default-src'],['self'])
-		self.assertEquals(h['img-src'],[])
+		self.assertEqual(h['script-src'],['self', 'code.jquery.com'])
+		self.assertEqual(h['default-src'],['self'])
+		self.assertEqual(h['img-src'],[])
 		""" test CSP policy rewrite """
 		h = CSP({'default-src':['none']}).rewrite_policy(defaultCSP)
-		self.assertEquals(h['script-src'],[])
-		self.assertEquals(h['default-src'],['none'])
-		self.assertEquals(h['report-uri'],[])
+		self.assertEqual(h['script-src'],[])
+		self.assertEqual(h['default-src'],['none'])
+		self.assertEqual(h['report-uri'],[])
 		""" test CSP header creation """
 		h = CSP({'default-src':['none']}).create_header()
-		self.assertEquals(h['Content-Security-Policy'],"default-src 'none'")
+		self.assertEqual(h['Content-Security-Policy'],"default-src 'none'")
 		""" test CSP -report-only header creation """
 		h = CSP({'default-src':['none'],'report-only':True}).create_header()
-		self.assertEquals(h['Content-Security-Policy-Report-Only'],"default-src 'none'")
+		self.assertEqual(h['Content-Security-Policy-Report-Only'],"default-src 'none'")
 
 	def test_CSP_fail(self):
 		""" test invalid paramter for CSP update """
@@ -44,14 +44,14 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('X-XSS-Protection'),'1; mode=block')
-			self.assertEquals(result.headers.get('Strict-Transport-Security'),'includeSubDomains; max-age=31536000')
-			self.assertEquals(result.headers.get('Public-Key-Pins'),'includeSubDomains; report-uri=/hpkp_report; max-age=5184000')
-			self.assertEquals(result.headers.get('X-Content-Type-Options'),'nosniff')
-			self.assertEquals(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
-			self.assertEquals(result.headers.get('X-Download-Options'),'noopen')
-			self.assertEquals(result.headers.get('X-Frame-Options'),'sameorigin')
-			self.assertEquals(result.headers.get('Content-Security-Policy'),"report-uri /csp_report; default-src 'self'")
+			self.assertEqual(result.headers.get('X-XSS-Protection'),'1; mode=block')
+			self.assertEqual(result.headers.get('Strict-Transport-Security'),'includeSubDomains; max-age=31536000')
+			self.assertEqual(result.headers.get('Public-Key-Pins'),'includeSubDomains; report-uri=/hpkp_report; max-age=5184000')
+			self.assertEqual(result.headers.get('X-Content-Type-Options'),'nosniff')
+			self.assertEqual(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
+			self.assertEqual(result.headers.get('X-Download-Options'),'noopen')
+			self.assertEqual(result.headers.get('X-Frame-Options'),'sameorigin')
+			self.assertEqual(result.headers.get('Content-Security-Policy'),"report-uri /csp_report; default-src 'self'")
 
 	def test_update_function(self):
 		""" test config update function """
@@ -67,9 +67,9 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('X-Permitted-Cross-Domain-Policies'),'all')
-			self.assertEquals(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com; report-uri /csp_report; default-src 'self'")
-			self.assertEquals(result.headers.get('Public-Key-Pins'),"pin-sha256=test123; pin-sha256=test2256; includeSubDomains; report-uri=/hpkp_report; max-age=5184000")
+			self.assertEqual(result.headers.get('X-Permitted-Cross-Domain-Policies'),'all')
+			self.assertEqual(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com; report-uri /csp_report; default-src 'self'")
+			self.assertEqual(result.headers.get('Public-Key-Pins'),"pin-sha256=test123; pin-sha256=test2256; includeSubDomains; report-uri=/hpkp_report; max-age=5184000")
 
 	def test_rewrite_function(self):
 		""" test config rewrite function """
@@ -84,8 +84,8 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('Content-Security-Policy'),"default-src 'none'")
-			self.assertEquals(result.headers.get('Public-Key-Pins'),"pin-sha256=test123")
+			self.assertEqual(result.headers.get('Content-Security-Policy'),"default-src 'none'")
+			self.assertEqual(result.headers.get('Public-Key-Pins'),"pin-sha256=test123")
 
 	def test_wrapper_update_function(self):
 		""" test updating policies from wrapper """
@@ -107,16 +107,16 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
-			self.assertEquals(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com; default-src 'none'")
-			self.assertEquals(result.headers.get('X-XSS-Protection'),'1')
-			self.assertEquals(result.headers.get('Public-Key-Pins'),"pin-sha256=test2256; pin-sha256=test123")
+			self.assertEqual(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
+			self.assertEqual(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com; default-src 'none'")
+			self.assertEqual(result.headers.get('X-XSS-Protection'),'1')
+			self.assertEqual(result.headers.get('Public-Key-Pins'),"pin-sha256=test2256; pin-sha256=test123")
 		@self.app.route('/test')
 		@self.sh.wrapper({'CSP':{'script-src':['nonce-1234']}})
 		def test(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/test')
-			self.assertEquals(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com 'nonce-1234'; default-src 'none'")
+			self.assertEqual(result.headers.get('Content-Security-Policy'),"script-src 'self' code.jquery.com 'nonce-1234'; default-src 'none'")
 
 	def test_passing_none_value_rewrite(self):
 		""" test removing header from update/rewrite """
@@ -126,9 +126,9 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
-			self.assertEquals(result.headers.get('CSP'),None)
-			self.assertEquals(result.headers.get('X-XSS-Protection'),None)
+			self.assertEqual(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
+			self.assertEqual(result.headers.get('CSP'),None)
+			self.assertEqual(result.headers.get('X-XSS-Protection'),None)
 
 	def test_passing_none_value_wrapper(self):
 		""" test removing policy from wrapper """
@@ -137,9 +137,9 @@ class TestAppUseCase(unittest.TestCase):
 		def index(): return "hi"
 		with self.app.test_client() as c:
 			result = c.get('/')
-			self.assertEquals(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
-			self.assertEquals(result.headers.get('CSP'),None)
-			self.assertEquals(result.headers.get('X-XSS-Protection'),None)
+			self.assertEqual(result.headers.get('X-Permitted-Cross-Domain-Policies'),'none')
+			self.assertEqual(result.headers.get('CSP'),None)
+			self.assertEqual(result.headers.get('X-XSS-Protection'),None)
 
 if __name__ == '__main__':
     unittest.main()

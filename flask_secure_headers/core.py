@@ -1,6 +1,6 @@
 from flask import make_response
 from functools import wraps
-from headers import *
+from .headers import *
 
 class Secure_Headers:
 	def __init__(self):
@@ -62,30 +62,30 @@ class Secure_Headers:
 			updateParams = {}
 		policies = self.defaultPolicies
 		if len(updateParams) > 0:
-			for k,v in updateParams.items():
+			for k,v in list(updateParams.items()):
 				k = k.replace('-','_')
 				c = globals()[k](v)
 				try:
 					policies[k] = c.update_policy(self.defaultPolicies[k])
-				except Exception, e:
+				except Exception as e:
 					raise
 
 		return [globals()[k](v).create_header()
-				for k,v in policies.items() if v is not None]
+				for k,v in list(policies.items()) if v is not None]
 
 	def _setRespHeader(self, resp, headers):
 		for hdr in headers:
-			for k,v in hdr.items():
+			for k,v in list(hdr.items()):
 				resp.headers[k] = v
 
 	def policyChange(self, updateParams, func):
 		""" update defaultPolicy dict """
-		for k,v in updateParams.items():
+		for k,v in list(updateParams.items()):
 			k = k.replace('-','_')
 			c = globals()[k](v)
 			try:
 				self.defaultPolicies[k] = getattr(c,func)(self.defaultPolicies[k])
-			except Exception, e:
+			except Exception as e:
 				raise
 
 	def update(self, updateParams):

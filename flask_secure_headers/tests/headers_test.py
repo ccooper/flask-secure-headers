@@ -9,7 +9,7 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid X_Frame_Options"""
 		h = X_Frame_Options({'value':'allow-from example.com'})
 		r = h.create_header()
-		self.assertEquals(r['X-Frame-Options'],'allow-from example.com')
+		self.assertEqual(r['X-Frame-Options'],'allow-from example.com')
 	def test_X_Frame_Options_fail(self):
 		""" test invalid input for X_Frame_Options"""
 		h = X_Frame_Options({'values':'allow-from example.com'})
@@ -23,7 +23,7 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid X_Content_Type_Options"""
 		h = X_Content_Type_Options({'value':'nosniff'})
 		r = h.create_header()
-		self.assertEquals(r['X-Content-Type-Options'],'nosniff')
+		self.assertEqual(r['X-Content-Type-Options'],'nosniff')
 	def test_X_Content_Type_Options_fail_input(self):
 		""" test invalid input for X_Content_Type_Options"""
 		h = X_Content_Type_Options({'values':'nosniff'})
@@ -39,7 +39,7 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid X_Download_Options"""
 		h = X_Download_Options({'value':'noopen'})
 		r = h.create_header()
-		self.assertEquals(r['X-Download-Options'],'noopen')
+		self.assertEqual(r['X-Download-Options'],'noopen')
 	def test_X_Download_Options_fail_input(self):
 		""" test invalid input for X_Download_Options"""
 		h = X_Download_Options({'values':'noopen'})
@@ -55,7 +55,7 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid X_Permitted_Cross_Domain_Policies"""
 		h = X_Permitted_Cross_Domain_Policies({'value':'master-only'})
 		r = h.create_header()
-		self.assertEquals(r['X-Permitted-Cross-Domain-Policies'],'master-only')
+		self.assertEqual(r['X-Permitted-Cross-Domain-Policies'],'master-only')
 	def test_X_Permitted_Cross_Domain_Policies_fail_input(self):
 		""" test invalid input for X_Permitted_Cross_Domain_Policies"""
 		h = X_Permitted_Cross_Domain_Policies({'values':'master-only'})
@@ -71,22 +71,22 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid X_XSS_Protection (int)"""
 		h = X_XSS_Protection({'value':1})
 		r = h.create_header()
-		self.assertEquals(r['X-XSS-Protection'],'1')
+		self.assertEqual(r['X-XSS-Protection'],'1')
 	def test_X_XSS_Protection_pass_str(self):
 		""" test valid X_XSS_Protection (str)"""
 		h = X_XSS_Protection({'value':'1'})
 		r = h.create_header()
-		self.assertEquals(r['X-XSS-Protection'],'1')
+		self.assertEqual(r['X-XSS-Protection'],'1')
 	def test_X_XSS_Protection_pass_second_param(self):
 		""" test valid X_XSS_Protection (with second parameter)"""
 		h = X_XSS_Protection({'value':'1','mode':'block'})
 		r = h.create_header()
-		self.assertEquals(r['X-XSS-Protection'],'1; mode=block')
+		self.assertEqual(r['X-XSS-Protection'],'1; mode=block')
 	def test_X_XSS_Protection_pass_second_param_false(self):
 		""" test valid X_XSS_Protection (with second parameter set to false)"""
 		h = X_XSS_Protection({'value':'1','mode':False})
 		r = h.create_header()
-		self.assertEquals(r['X-XSS-Protection'],'1')
+		self.assertEqual(r['X-XSS-Protection'],'1')
 	def test_X_XSS_Protection_fail_input(self):
 		""" test invalid input for X_XSS_Protection"""
 		h = X_XSS_Protection({'values':1})
@@ -107,17 +107,17 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid HSTS (int)"""
 		h = HSTS({'max-age':23})
 		r = h.create_header()
-		self.assertEquals(r['Strict-Transport-Security'],'max-age=23')
+		self.assertEqual(r['Strict-Transport-Security'],'max-age=23')
 	def test_HSTS_pass_str(self):
 		""" test valid HSTS (str)"""
 		h = HSTS({'max-age':'23'})
 		r = h.create_header()
-		self.assertEquals(r['Strict-Transport-Security'],'max-age=23')
+		self.assertEqual(r['Strict-Transport-Security'],'max-age=23')
 	def test_HSTS_pass_second_param(self):
 		""" test valid HSTS (with second parameter)"""
 		h = HSTS({'max-age':23,'includeSubDomains':True,'preload':False})
 		r = h.create_header()
-		self.assertEquals(r['Strict-Transport-Security'],'includeSubDomains; max-age=23')
+		self.assertEqual(r['Strict-Transport-Security'],'includeSubDomains; max-age=23')
 	def test_HSTS_fail_input(self):
 		""" test invalid input for HSTS """
 		h = HSTS({'values':23})
@@ -138,27 +138,27 @@ class TestPolicyCreation(unittest.TestCase):
 		""" test valid HPKP """
 		h = HPKP({'max-age':'23','includeSubDomains':True,'pins':[{'sha256':'1234'}]})
 		r = h.create_header()
-		self.assertEquals(r['Public-Key-Pins'],'includeSubDomains; pin-sha256=1234; max-age=23')
+		self.assertEqual(r['Public-Key-Pins'],'includeSubDomains; pin-sha256=1234; max-age=23')
 	def test_HPKP_pass_2_pins(self):
 		""" test valid HPKP """
 		h = HPKP({'max-age':'23','includeSubDomains':True,'pins':[{'sha256':'1234'},{'sha256':'abcd'}]})
 		r = h.create_header()
-		self.assertEquals(r['Public-Key-Pins'],'includeSubDomains; pin-sha256=1234; pin-sha256=abcd; max-age=23')
+		self.assertEqual(r['Public-Key-Pins'],'includeSubDomains; pin-sha256=1234; pin-sha256=abcd; max-age=23')
 	def test_HPKP_pass_no_pins(self):
 		""" test valid HPKP (with no pins) """
 		h = HPKP({'max-age':'23','includeSubDomains':True})
 		r = h.create_header()
-		self.assertEquals(r['Public-Key-Pins'],'includeSubDomains; max-age=23')
+		self.assertEqual(r['Public-Key-Pins'],'includeSubDomains; max-age=23')
 	def test_HPKP_pass_no_include_subdomains(self):
 		""" test valid HPKP (with no pins) """
 		h = HPKP({'max-age':'23','includeSubDomains':False})
 		r = h.create_header()
-		self.assertEquals(r['Public-Key-Pins'],'max-age=23')
+		self.assertEqual(r['Public-Key-Pins'],'max-age=23')
 	def test_HPKP_pass_report_only(self):
 		""" test valid HPKP for Report-Only header """
 		h = HPKP({'max-age':'23','includeSubDomains':True,'pins':[{'sha256':'1234'}],'report-only':True})
 		r = h.create_header()		
-		self.assertEquals(r['Public-Key-Pins-Report-Only'],'includeSubDomains; pin-sha256=1234; max-age=23')	
+		self.assertEqual(r['Public-Key-Pins-Report-Only'],'includeSubDomains; pin-sha256=1234; max-age=23')	
 	def test_HPHP_fail_nonList(self):
 		""" test invalid pins argument for HPKP (not passing list for pins argument) """
 		h = HPKP({'pins':'test'})
